@@ -6,18 +6,21 @@
         body {
             font-family: Arial, sans-serif;
             background-image: url('https://static.wixstatic.com/media/1d6090cc4bbf44628dfd82a1979770e8.jpg/v1/fill/w_980,h_551,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/Movie%20Revenue%20and%20Rating%20Prediction%20Using%20Machine%20Learning.jpg');
-            background-size: cover; /* Adjusts the background image to cover the entire container */
+            background-size: cover;
             margin: 0;
             padding: 20px;
             display: flex;
-            justify-content: start;
+            justify-content: center;
             align-items: center;
-            height: 90vh; /* Make the body take up the full height of the viewport */
+            height: 100vh;
         }
 
-        .div1{
-            margin-top: 30px;
-            margin-left: 20%; 
+        .div1 {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
         }
 
         h1 {
@@ -25,11 +28,11 @@
             text-align: center;
         }
 
-        form {
-            display: flex;
-            flex-direction: column; /* Stack form elements vertically */
-            align-items: center; /* Center form elements horizontally */
-            padding: 5px;
+        video {
+            display: block;
+            margin: 20px auto;
+            border: 2px solid white;
+            border-radius: 10px;
         }
 
         button {
@@ -45,14 +48,64 @@
         button:hover {
             background-color: #45a049;
         }
+
+        #result {
+            margin-top: 20px;
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <div class='div1'>
+    <div class="div1">
         <h1>Movie Recommender System</h1>
-        <form action="/analyze_emotion" method="POST">
-            <button type="submit">Analyze Emotion</button>
-        </form>
+        <video id="video" width="640" height="480" autoplay></video>
+        <button id="capture">Analyze Emotion</button>
+        <div id="result"></div>
     </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const captureButton = document.getElementById('capture');
+        const resultDiv = document.getElementById('result');
+
+        // Access the device camera and stream to video element
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error("Error accessing the camera: ", err);
+            });
+
+        // Capture frame and send to the server
+        captureButton.addEventListener('click', () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL('image/jpeg');
+
+            fetch('/analyze_emotion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ image: dataUrl })
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultDiv.innerHTML = `<h2>Emotion: ${data.emotion}</h2>`;
+                // Add movie recommendations if available
+                if (data.movies && data.movies.length > 0) {
+                    const movieList = data.movies.map(movie => `<li>${movie.title} (Rating: ${movie.rating})</li>`).join('');
+                    resultDiv.innerHTML += `<h3>Recommended Movies:</h3><ul>${movieList}</ul>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
 </body>
-</html> 
+</html>
