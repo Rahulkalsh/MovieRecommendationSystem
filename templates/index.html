@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Emotion Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://static.wixstatic.com/media/1d6090cc4bbf44628dfd82a1979770e8.jpg/v1/fill/w_980,h_551,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/Movie%20Revenue%20and%20Rating%20Prediction%20Using%20Machine%20Learning.jpg');
+            background-size: cover; /* Adjusts the background image to cover the entire container */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: start;
+            align-items: center;
+            height: 90vh; /* Make the body take up the full height of the viewport */
+        }
+
+        .div1{
+            margin-top: 30px;
+            margin-left: 20%; 
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column; /* Stack form elements vertically */
+            align-items: center; /* Center form elements horizontally */
+            padding: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class='div1'>
+        <h1>Movie Recommender System</h1>
+        <form action="/analyze_emotion" method="POST">
+            <button type="submit">Analyze Emotion</button>
+        </form>
+    </div>
+</body>
+</html> 
